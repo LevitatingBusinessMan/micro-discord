@@ -138,7 +138,7 @@ static void send_presence(char* filename, char* filetype) {
 
 	char combined_string[200];
 	strcpy(combined_string, filename);
-	strcat(combined_string, " ");
+	strcat(combined_string, ",");
 	strcat(combined_string, filetype);
 
 
@@ -180,7 +180,7 @@ static void start_socket() {
 	    else if (rc == 0) {
 	    	
 	    	char* filename = buf;
-			char* filetype = string_split(buf, ' ');
+			char* filetype = string_split(buf, ',');
 
 			printf("file: %s, details: %s\n", filename, filetype);
 
