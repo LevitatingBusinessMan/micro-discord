@@ -39,7 +39,7 @@ function onBufferOpen(buf)
 		filetype = "unknown"
 	end
 
-	local cmd = fmt.Sprintf("./micro_rpc '%s' '%s' >/dev/null 2>&1", file, buf:FileType())
+	local cmd = fmt.Sprintf("~/.config/micro/plug/discord/micro_rpc '%s' '%s' >/dev/null 2>&1", file, buf:FileType())
 	os.execute(cmd)
 end
 
@@ -52,5 +52,5 @@ function onSave(pane)
 end
 
 function ensure_daemon()
-	os.execute("pidof micro_rpc >/dev/null || ./micro_rpc -d >/dev/null &")
+	os.execute("pidof micro_rpc >/dev/null || ~/.config/micro/plug/discord/micro_rpc -d >/dev/null 2>&1 &")
 end
