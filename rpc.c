@@ -1,4 +1,4 @@
-#include "./discord-rpc/linux-dynamic/include/discord_rpc.h"
+#include <discord_rpc.h>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
