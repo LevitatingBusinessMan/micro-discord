@@ -28,8 +28,13 @@ function onBufferOpen(buf)
 	--ensure_daemon()
 
 	local file = buf.Path
+	local filetype = buf:FileType()
 	if file == 'Log' or file =='' then
 		return
+	end
+
+	if filetype == nil then
+		filetype = "unknown"
 	end
 
 	local cmd = fmt.Sprintf("./micro_rpc '%s' '%s' >/dev/null 2>&1", file, buf:FileType())

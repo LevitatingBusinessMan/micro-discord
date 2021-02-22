@@ -22,12 +22,13 @@ void initialize(const char* applicationId) {
     Discord_Initialize(applicationId, &handlers, 1, NULL);
 }
 
-void update_presence(const char* filename, const char* details)
+void update_presence(const char* upper_line, const char* lower_line)
 {
     DiscordRichPresence discordPresence;
     memset(&discordPresence, 0, sizeof(discordPresence));
-    discordPresence.state = details;
-    discordPresence.details = filename;
+
+    discordPresence.state = lower_line;
+    discordPresence.details = upper_line;
     discordPresence.startTimestamp = time(0);
     discordPresence.endTimestamp = 0;
     discordPresence.largeImageKey = NULL;
@@ -56,7 +57,7 @@ static void readline(char* buffer) {
 
 
 static void usage() {
-	printf("Usage: micro_rpc filename details OR micro_rpc -d\n");
+	printf("Usage: micro_rpc filename filetype OR micro_rpc -d\n");
 }
 
 static char* string_split(char* string, char del) {
@@ -73,7 +74,7 @@ static char* string_split(char* string, char del) {
 
 static void start_socket();
 
-static void send_presence(char* filename, char* details);
+static void send_presence(char* filename, char* filetype);
 
 int main(int argc, char *argv[]) {
 	if (argc < 2) {
@@ -126,7 +127,7 @@ static struct sockaddr_un get_addr() {
 	return addr;
 }
 
-static void send_presence(char* filename, char* details) {
+static void send_presence(char* filename, char* filetype) {
 	int fd = socket(AF_UNIX, SOCK_STREAM, 0);
 	struct sockaddr_un addr = get_addr();
 
@@ -138,7 +139,7 @@ static void send_presence(char* filename, char* details) {
 	char combined_string[200];
 	strcpy(combined_string, filename);
 	strcat(combined_string, " ");
-	strcat(combined_string, details);
+	strcat(combined_string, filetype);
 
 
 	printf("%s\n", combined_string);
@@ -179,11 +180,17 @@ static void start_socket() {
 	    else if (rc == 0) {
 	    	
 	    	char* filename = buf;
-			char* details = string_split(buf, ' ');
+			char* filetype = string_split(buf, ' ');
 
-			printf("file: %s, details: %s\n", filename, details);
+			printf("file: %s, details: %s\n", filename, filetype);
+
+			char upper_line[100];
+			char lower_line[100];
+
+			sprintf(upper_line, "editing: %s", filename);
+			sprintf(lower_line, "ft: %s", filetype);
 			
-			update_presence(filename, details);
+			update_presence(upper_line, lower_line);
 	      	close(cl);
 	    }
 	}
