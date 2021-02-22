@@ -1,14 +1,49 @@
---package.cpath = package.cpath .. "?.so"
-local ffi = require("ffi")
-local RPC = ffi.load("./rpc.so") 
+local fmt = import("fmt")
+local micro = import("micro")
 
-local headers_file = io.open("./rpc.h", "r")
-local headers = headers_file:read("*a")
+--[[ 
+	local ffi = require("ffi")
+	local RPC = ffi.load("./rpc.so") 
 
-ffi.cdef(headers)
+	local headers_file = io.open("./rpc.h", "r")
+	local headers = headers_file:read("*a")
 
-RPC.initialize("813116720646455346")
-RPC.update_presence("Testfile", "test")
+	ffi.cdef(headers)
 
---To stall termination
-io.read()
+	RPC.initialize("813116720646455346")
+	RPC.update_presence("Testfile", "test")
+
+	--To stall termination
+	io.read()
+]]--
+
+function preinit()
+	--Run if not running
+	ensure_daemon()
+end
+
+function onBufferOpen(buf)
+
+	--Run it again in case another instance closed it
+	--ensure_daemon()
+
+	local file = buf.Path
+	if file == 'Log' or file =='' then
+		return
+	end
+
+	local cmd = fmt.Sprintf("./micro_rpc '%s' '%s' >/dev/null 2>&1", file, buf:FileType())
+	os.execute(cmd)
+end
+
+
+--I haven't found a good way to switching the focus to a different tab or pane yet
+function onSave(pane)
+	if pane.buf ~= nil then
+		onBufferOpen(pane.buf)
+	end
+end
+
+function ensure_daemon()
+	os.execute("pidof micro_rpc >/dev/null || ./micro_rpc -d >/dev/null &")
+end
