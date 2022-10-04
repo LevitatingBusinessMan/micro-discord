@@ -1,5 +1,6 @@
 CC=gcc
-CFLAGS=-ldiscord-rpc -Ldiscord-rpc/linux-dynamic/lib -Hdiscord-rpc/linux-dynamic/include
+CFLAGS=-Ldiscord-rpc/linux-dynamic/lib -Idiscord-rpc/linux-dynamic/include
+LDLIBS=-ldiscord-rpc 
 
 build:
-	${CC} ${CFLAGS} rpc.c -o micro_rpc -Wl,-rpath,./discord-rpc/linux-dynamic/lib
+	${CC} ${CFLAGS} rpc.c ${LDLIBS} -o micro_rpc -Wl,-rpath,./discord-rpc/linux-dynamic/lib
